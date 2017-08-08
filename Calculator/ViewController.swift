@@ -12,7 +12,7 @@ class ViewController: UIViewController {
    
 
     
-    @IBOutlet private var display: UILabel!
+    @IBOutlet var display: UILabel! // NOTE: made public for testing purpose.
     @IBOutlet var descriptionLabel: UILabel!
     private var userIntheMiddleOfTyping = false
     private var numberHasDot = false
@@ -38,8 +38,12 @@ class ViewController: UIViewController {
     }
     
 
-    
-    @IBAction func dot(_ sender: UIButton) {
+    // TODO: Follow the teacher's function naming!!!
+    // This is an action so name it `touchDot` like the teacher
+    // or something like `dotTapped` which is actually more common.
+    // but if you do that, you'll have to be consistent and rename
+    // all button targets.
+    @IBAction func dot(_ sender: UIButton) { // TODO: would be cool if you don't have to assign a dedicated target for dot, its either an operand or operator if you think about it ;)
         if !numberHasDot {
             let digit = sender.currentTitle!
             if userIntheMiddleOfTyping {
@@ -54,8 +58,10 @@ class ViewController: UIViewController {
         }
         numberHasDot = true
     }
+
+    // NOTE: Button targets are made public for testing purpose.
     
-    @IBAction private func touchDigit(_ sender: UIButton) {
+    @IBAction func touchDigit(_ sender: UIButton) {
         let digit = sender.currentTitle!
         if userIntheMiddleOfTyping {
             let textCurrentlydisplayed = display.text!
@@ -79,7 +85,7 @@ class ViewController: UIViewController {
             return display.text != nil ?
                 Double(display.text!): nil*/
         }
-        set {
+        set { // TODO: bad indentation.
                 let formatter = NumberFormatter()
                 formatter.minimumSignificantDigits = 0
                 formatter.maximumFractionDigits = 6
@@ -91,9 +97,14 @@ class ViewController: UIViewController {
     }
     private var brain = CalculatorBrain()
     
-    @IBAction private func performOperation(_ sender: UIButton) {
+    @IBAction func performOperation(_ sender: UIButton) {
  
         if userIntheMiddleOfTyping {
+
+            // TODO: What happens if displayValue is nil? (Tap on `+-` and `=`, it'll crash)
+            // You use `!` to forcefully unwrapp an optional only in two cases:
+            // 1: you're 100% sure it has value
+            // 2: you want your application to crash if this value is nil.
             brain.setOperand(operand: displayValue!)
             userIntheMiddleOfTyping = false
             numberHasDot = false
@@ -106,7 +117,7 @@ class ViewController: UIViewController {
             descriptionLabel.text = brain.getDescription() 
         }
         else{
-            descriptionLabel.text = brain.getDescription() + "..."
+            descriptionLabel.text = brain.getDescription() + "..." 
         }
 
         displayValue = brain.result

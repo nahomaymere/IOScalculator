@@ -8,11 +8,16 @@
 
 import Foundation
 
-
+// TODO: I recommend `CalculatorBrain {` but its your choice, however whichever you choose 
+//          be consistent!!! Either change this or change in your ViewController class.
 class   CalculatorBrain
 {
-    private var isPartialResult = false;
-    private var description = " "
+    private var isPartialResult = false; // TODO: replace it with `private(set) var isPartialResult = false`
+
+    // TODO: Description has a initial constant value which is space.
+    // assign a constant for it, like: var description = initialDescriptionValue
+    // and also comment why thats needed.
+    private var description = " " // TODO: replace it with `private(set) var`
     private var accumulator = 0.0
     private var internalProgram = [AnyObject]()
 
@@ -20,12 +25,12 @@ class   CalculatorBrain
         accumulator = operand;
         internalProgram.append(operand as AnyObject)
     }
-    func getDescription()->String  {
+    func getDescription()->String  { // TODO: use the `private(set) var` and remove this method.
         return description
     }
 
   
-    func isResultPartial()->Bool {
+    func isResultPartial()->Bool { // TODO: use the `private(set) var` and remove this method.
         return isPartialResult
     }
   
@@ -56,6 +61,18 @@ class   CalculatorBrain
     func performOperation(symbol:String)  {
         if let operation = operations[symbol]{
             internalProgram.append(symbol as AnyObject)
+
+            // TODO: This is ok for now but think what would happen
+            // if you wanna change the symbols (eg ÷ with /)
+
+            // TODO: `performOperation` seems to do more than that ;)
+            // It'd be good practice to separate description related stuff out.
+            //
+            // Even better you can use the switch below and call particular 
+            // description related method for each case, eg.
+            // case .Constant(let associatedConstantValue):
+            //   description(forConstant: associatedConstantValue)
+
             if(symbol == "rand"){
                 description = "rand() = " + String(format:"%g",accumulator)
                 
@@ -74,7 +91,7 @@ class   CalculatorBrain
                 }
             }
   
-            else{
+            else{ // TODO: BAD INDENTATION!
                     description.append(String(format:"%g",accumulator)+symbol)
                 }
             
@@ -103,7 +120,7 @@ class   CalculatorBrain
     }
     private func clearMemory(){
         accumulator = 0.0
-        description = " "
+        description = " " // TODO: Here you could do: description = initialDescriptionValue
         internalProgram.removeAll()
         pending = nil
         isPartialResult = false
