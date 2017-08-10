@@ -11,8 +11,8 @@ import Foundation
 
 class   CalculatorBrain
 {
-    private var isPartialResult = false
-    private var description = " "
+    private(set) var isPartialResult = false
+    private(set) var description = ""
     private var accumulator = 0.0
     private var internalProgram = [AnyObject]()
     private var operations:Dictionary<String,Operations> = [
@@ -45,7 +45,7 @@ class   CalculatorBrain
         var firstOperand: Double
     }
     typealias PropertyList = AnyObject
-    
+
     var program: PropertyList {
         get {
             return internalProgram as CalculatorBrain.PropertyList
@@ -75,14 +75,6 @@ class   CalculatorBrain
         internalProgram.append(operand as AnyObject)
     }
     
-    func getDescription()->String {
-        return description
-    }
-    
-    func isResultPartial()->Bool {
-        return isPartialResult
-    }
-    
     func performOperation(symbol:String) {
         if let operation = operations[symbol] {
             internalProgram.append(symbol as AnyObject)
@@ -93,7 +85,7 @@ class   CalculatorBrain
             } else  if symbol == "rand" {
                 description = "rand() = " + String(format:"%g",accumulator)
                 
-            } else  if description != " " {
+            } else  if description != "" {
                 let lastChar = description[description.index(before: description.endIndex)]
                 if (symbol == "×" ||  symbol == "÷") && (lastChar == "+" || lastChar == "-") || ((symbol == "+" ||  symbol == "-") && (lastChar == "×" || lastChar == "÷")) {
                     description.insert("(", at: description.startIndex)
@@ -133,7 +125,7 @@ class   CalculatorBrain
     
     private func clearMemory() {
         accumulator = 0.0
-        description = " "
+        description.removeAll()
         internalProgram.removeAll()
         pending = nil
         isPartialResult = false

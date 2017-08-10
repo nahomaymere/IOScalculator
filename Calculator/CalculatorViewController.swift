@@ -90,10 +90,10 @@ class CalculatorViewController: UIViewController {
         if let mathSymbol = sender.currentTitle {
             brain.performOperation(symbol: mathSymbol)
         }
-        if !brain.isResultPartial() {
-            descriptionLabel.text = brain.getDescription()
+        if !brain.isPartialResult {
+            descriptionLabel.text = brain.description
         } else {
-            descriptionLabel.text = brain.getDescription() + "..."
+            descriptionLabel.text = brain.description + "..."
         }
         
         displayValue = brain.result
