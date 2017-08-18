@@ -9,11 +9,12 @@
 import Foundation
 
 
-class   CalculatorBrain
-{
+class   CalculatorBrain {
+    
     private(set) var isPartialResult = false
     private(set) var description = ""
     private var accumulator = 0.0
+    private var variable = ""
     private var internalProgram = [AnyObject]()
     private var operations:Dictionary<String,Operations> = [
         "π" : Operations.Constant(.pi), //M_PI,
@@ -31,6 +32,7 @@ class   CalculatorBrain
         "=" : Operations.Equals,
         "rand":Operations.RandomNumberGenerator
     ]
+    public var variablesValues:Dictionary<String, Double> = [:]
     private enum Operations {
         case Constant(Double)
         case UnaryOperations((Double)->Double)
@@ -60,6 +62,7 @@ class   CalculatorBrain
                     else if let operation = op as? String {
                         performOperation(symbol: operation)
                     }
+
                 }
             }
         }
@@ -73,31 +76,62 @@ class   CalculatorBrain
     func setOperand(operand:Double) {
         accumulator = operand;
         internalProgram.append(operand as AnyObject)
+        if description != "" {
+            let lastChar = description[description.index(before: description.endIndex)]
+            if lastChar == "=" {
+                description.removeAll()
+            }
+            
+        }
+    }
+    func setOperand(variableName:String) {
+        let operandValue = variablesValues[variableName] ?? 0.0
+        accumulator = operandValue
+
+        
     }
     
     func performOperation(symbol:String) {
         if let operation = operations[symbol] {
             internalProgram.append(symbol as AnyObject)
-            if symbol == "π" || symbol == "e" {
-                if description == "0" {
-                    description = String(format:"%g",accumulator)
-                }
-            } else  if symbol == "rand" {
+            if symbol == "rand" {
                 description = "rand() = " + String(format:"%g",accumulator)
                 
-            } else  if description != "" {
+            } else if description.characters.count > 0 {
                 let lastChar = description[description.index(before: description.endIndex)]
-                if (symbol == "×" ||  symbol == "÷") && (lastChar == "+" || lastChar == "-") || ((symbol == "+" ||  symbol == "-") && (lastChar == "×" || lastChar == "÷")) {
+                if lastChar == "=" {
+                    if ["cos", "sin", "%", "√"].contains(symbol) {
+                        description.insert(")", at: description.index(description.endIndex, offsetBy: -1))
+                        description = symbol+"(" + description
+                    } else if symbol == "e" || symbol == "π" {
+                        description.removeAll()
+                    } else if symbol == "+" || symbol == "-" {
+                        description.remove(at: description.index(before: description.endIndex))
+                        description.append(symbol)
+                    } else if symbol == "×" || symbol == "÷" {
+                        description.insert("(", at: description.startIndex)
+                        description.remove(at: description.index(before: description.endIndex))
+                        description.append(")" + symbol)
+                    }
+                } else if !["e","π"].contains(symbol) && [")","e","π"].contains(lastChar) || ["e","π"].contains(symbol) && !["e","π"].contains(lastChar) {
+                    description.append(symbol)
+                } else if (["×","÷"].contains(symbol)) && (["-","+"].contains(lastChar)) || (["-","+"].contains(symbol) && ["×","÷"].contains(lastChar)) {
                     description.insert("(", at: description.startIndex)
                     description.append(String(format:"%g",accumulator)+")"+symbol)
-                } else  if lastChar == "=" {
-                    description = (String(format:"%g",accumulator)+symbol)
-                } else {
+                } else  if ["cos","sin","%","√"].contains(symbol) {
+                    description.append(symbol+"(" + String(format:"%g",accumulator) + ")")
+                } else if ["×","÷","-","+","="].contains(symbol) {
                     description.append(String(format:"%g",accumulator)+symbol)
                 }
-            } else {
+            } else if ["×","÷","-","+"].contains(symbol) {
                 description.append(String(format:"%g",accumulator)+symbol)
+            } else if symbol == "π" || symbol == "e" {
+                description.append(symbol)
+            } else  if ["cos","sin","%","√"].contains(symbol) {
+                description.append(symbol+"(" + String(format:"%g",accumulator) + ")")
             }
+            
+            
             
             switch operation {
             case .Constant(let associatedConstantValue):

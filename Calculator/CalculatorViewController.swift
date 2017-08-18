@@ -10,8 +10,6 @@ import UIKit
 
 class CalculatorViewController: UIViewController {
     
-    
-    
     @IBOutlet private var display: UILabel!
     @IBOutlet var descriptionLabel: UILabel!
     
